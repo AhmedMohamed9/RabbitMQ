@@ -27,17 +27,22 @@ namespace Producer.services
 
             using var channel = await connection.CreateChannelAsync();
 
-            await channel.QueueDeclareAsync(queue: _rabbitmqConfiguration.QueueName,
-                durable: true,
-                exclusive: false,
-                autoDelete: false,
-                arguments: null);
+            await channel.ExchangeDeclareAsync(
+                exchange: _rabbitmqConfiguration.ExchangeName,
+                type: ExchangeType.Fanout
+            );
+
+                //await channel.QueueDeclareAsync(queue: _rabbitmqConfiguration.QueueName,
+                //    durable: true,
+                //    exclusive: false,
+                //    autoDelete: false,
+                //    arguments: null);
 
             var body = Encoding.UTF8.GetBytes(JsonSerializer.Serialize(message));
 
             await channel.BasicPublishAsync(
-                exchange: string.Empty,                  // الـ Default Exchange مجهول الاسم
-                routingKey: _rabbitmqConfiguration.QueueName, // في الـ Default Exchange، الـ routingKey هو نفسه اسم الطابور
+                exchange: _rabbitmqConfiguration.ExchangeName,                  // الـ Default Exchange مجهول الاسم
+                routingKey: "", // في الـ Default Exchange، الـ routingKey هو نفسه اسم الطابور
                 body: body
             );
         }

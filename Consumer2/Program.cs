@@ -4,7 +4,7 @@ using RabbitMQ.Client.Events;
 using Shared.Configuration;
 using System.Text;
 
-namespace Consumer
+namespace Consumer2
 {
     internal class Program
     {
@@ -53,7 +53,7 @@ namespace Consumer
             {
                 var body = ea.Body.ToArray();
                 var message = Encoding.UTF8.GetString(body);
-                Console.WriteLine($"First Consumer [x] Received message: {message}");
+                Console.WriteLine($"Second Consumer [x] Received message: {message}");
 
                 // هنا يمكنك تنفيذ العمليات الطويلة (مثل الحفظ في قاعدة البيانات) باستخدام await
                 await Task.CompletedTask;
