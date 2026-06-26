@@ -21,7 +21,7 @@ namespace Producer.services
 
         }
 
-        public async Task Publish<T>(T message)
+        public async Task Publish<T>(T message, string routingKey)
         {
             using var connection = await _factory.CreateConnectionAsync();
 
@@ -29,20 +29,16 @@ namespace Producer.services
 
             await channel.ExchangeDeclareAsync(
                 exchange: _rabbitmqConfiguration.ExchangeName,
-                type: ExchangeType.Fanout
+                type: ExchangeType.Direct
             );
 
-                //await channel.QueueDeclareAsync(queue: _rabbitmqConfiguration.QueueName,
-                //    durable: true,
-                //    exclusive: false,
-                //    autoDelete: false,
-                //    arguments: null);
+         
 
             var body = Encoding.UTF8.GetBytes(JsonSerializer.Serialize(message));
 
             await channel.BasicPublishAsync(
                 exchange: _rabbitmqConfiguration.ExchangeName,                  // الـ Default Exchange مجهول الاسم
-                routingKey: "", // في الـ Default Exchange، الـ routingKey هو نفسه اسم الطابور
+                routingKey: routingKey, // في الـ Default Exchange، الـ routingKey هو نفسه اسم الطابور
                 body: body
             );
         }
