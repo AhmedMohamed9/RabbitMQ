@@ -15,9 +15,9 @@ namespace Producer.Controllers
             _rabbitMQService = rabbitMQService;
         }
         [HttpPost("send")]
-        public async Task<IActionResult> Send([FromBody] MessageDTO message)
+        public async Task<IActionResult> Send([FromBody] MessageDTO message, [FromQuery] string routingKey)
         {
-            await _rabbitMQService.Publish(message);
+            await _rabbitMQService.Publish(message,routingKey);
             return Ok();
         }
     }

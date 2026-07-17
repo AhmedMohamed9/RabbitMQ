@@ -21,7 +21,7 @@ namespace Producer.services
 
         }
 
-        public async Task Publish<T>(T message)
+        public async Task Publish<T>(T message,string routingKey)
         {
             using var connection = await _factory.CreateConnectionAsync();
 
@@ -29,7 +29,7 @@ namespace Producer.services
 
             await channel.ExchangeDeclareAsync(
                 exchange: _rabbitmqConfiguration.ExchangeName,
-                type: ExchangeType.Fanout
+                type: ExchangeType.Topic
             );
 
                 //await channel.QueueDeclareAsync(queue: _rabbitmqConfiguration.QueueName,
@@ -42,7 +42,7 @@ namespace Producer.services
 
             await channel.BasicPublishAsync(
                 exchange: _rabbitmqConfiguration.ExchangeName,                  // الـ Default Exchange مجهول الاسم
-                routingKey: "", // في الـ Default Exchange، الـ routingKey هو نفسه اسم الطابور
+                routingKey: routingKey, // في الـ Default Exchange، الـ routingKey هو نفسه اسم الطابور
                 body: body
             );
         }

@@ -30,7 +30,7 @@ namespace Consumer2
             using var channel = await connection.CreateChannelAsync();
 
             // 2. الإعلان عن الـ Fanout Exchange لضمان وجوده سواء اشتغل البروديوسر أو الكونسومر الأول
-            await channel.ExchangeDeclareAsync(rabbitMQConfig.ExchangeName, type: ExchangeType.Fanout);
+            await channel.ExchangeDeclareAsync(rabbitMQConfig.ExchangeName, type: ExchangeType.Topic);
 
             // 3. إنشاء طابور مؤقت ومجهول الاسم (Temporary / Anonymous Queue)
             // هذا الطابور خاص بنسخة التطبيق الحالية وسيتم حذفه تلقائياً بمجرد إغلاق الاتصال
@@ -42,7 +42,8 @@ namespace Consumer2
             await channel.QueueBindAsync(
                 queue: queueName,
                 exchange: rabbitMQConfig.ExchangeName, // تم الإصلاح هنا
-                routingKey: "");
+                routingKey: rabbitMQConfig.bindingKey,
+                arguments:null);
 
             // ملحوظة: تم حذف سطر الـ BasicQosAsync (Prefetch Count) لأنه غير مستخدم في نمط الـ Pub/Sub بناءً على الفيديو
 

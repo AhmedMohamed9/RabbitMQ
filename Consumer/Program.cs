@@ -3,7 +3,7 @@ using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 using Shared.Configuration;
 using System.Text;
-
+using System;
 namespace Consumer
 {
     internal class Program
@@ -18,19 +18,21 @@ namespace Consumer
 
             var rabbitMQConfig = configuration.GetSection(nameof(RabbitMQConfiguration)).Get<RabbitMQConfiguration>();
 
+
+
+
             var factory = new ConnectionFactory()
             {
                 HostName = rabbitMQConfig.Server,
                 UserName = rabbitMQConfig.UserName,
                 Password = rabbitMQConfig.Password
             };
-
             // 1. إنشاء الاتصال والقناة بشكل غير متزامن (Async)
             using var connection = await factory.CreateConnectionAsync();
             using var channel = await connection.CreateChannelAsync();
 
             // 2. الإعلان عن الـ Fanout Exchange لضمان وجوده سواء اشتغل البروديوسر أو الكونسومر الأول
-            await channel.ExchangeDeclareAsync(rabbitMQConfig.ExchangeName, type: ExchangeType.Fanout);
+            await channel.ExchangeDeclareAsync(rabbitMQConfig.ExchangeName, type: ExchangeType.Topic);
 
             // 3. إنشاء طابور مؤقت ومجهول الاسم (Temporary / Anonymous Queue)
             // هذا الطابور خاص بنسخة التطبيق الحالية وسيتم حذفه تلقائياً بمجرد إغلاق الاتصال
@@ -41,8 +43,9 @@ namespace Consumer
             // تم تعديل الـ exchange ليأخذ ExchangeName بدلاً من QueueName ليعمل التوجيه بشكل صحيح
             await channel.QueueBindAsync(
                 queue: queueName,
-                exchange: rabbitMQConfig.ExchangeName, // تم الإصلاح هنا
-                routingKey: "");
+                    exchange: rabbitMQConfig.ExchangeName,
+                    routingKey: rabbitMQConfig.bindingKey,
+                    arguments: null);
 
             // ملحوظة: تم حذف سطر الـ BasicQosAsync (Prefetch Count) لأنه غير مستخدم في نمط الـ Pub/Sub بناءً على الفيديو
 

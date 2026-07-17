@@ -2,6 +2,6 @@
 {
     public interface IRabbitMQService
     {
-        public Task Publish<T>(T message);
+        public Task Publish<T>(T message,string routingKey);
     }
 }

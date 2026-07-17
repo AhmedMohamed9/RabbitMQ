@@ -1,6 +1,6 @@
 <Solution>
+  <Project Path="Consumer/Consumer.csproj" />
   <Project Path="Consumer2/Consumer2.csproj" Id="683a0c14-0f7e-4bf7-8e3f-1f8bc80b0e4b" />
-  <Project Path="D:/Courses/RabbitMQ/Consumer/Consumer.csproj" />
-  <Project Path="D:/Courses/RabbitMQ/Producer/01_Producer.csproj" />
-  <Project Path="D:/Courses/RabbitMQ/Shared/Shared.csproj" />
+  <Project Path="Producer/01_Producer.csproj" />
+  <Project Path="Shared/Shared.csproj" />
 </Solution>
